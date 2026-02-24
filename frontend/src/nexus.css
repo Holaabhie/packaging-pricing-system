@@ -1,0 +1,765 @@
+/* ============================================ 
+ NEXUS ANALYTICS DASHBOARD v4.0 (Dark Mode + Premium Polish)
+ ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ========================================== 
+ CSS CUSTOM PROPERTIES & THEME SYSTEM 
+ ========================================== */
+:root {
+    /* Modern Palette - Organic & Soft */
+    --primary: #4F46E5;
+    --primary-soft: #818CF8;
+    --primary-glow: rgba(79, 70, 229, 0.4);
+
+    --accent: #EC4899;
+    --accent-glow: rgba(236, 72, 153, 0.4);
+
+    --success: #10B981;
+    --warning: #F59E0B;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    --gradient-hover: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+
+    /* Light Theme Backgrounds */
+    --bg-mesh-1: #E0E7FF;
+    --bg-mesh-2: #FCE7F3;
+    --bg-mesh-3: #FAE8FF;
+    --bg-mesh-gradient: radial-gradient(at 40% 20%, var(--bg-mesh-1) 0px, transparent 50%),
+        radial-gradient(at 80% 0%, var(--bg-mesh-2) 0px, transparent 50%),
+        radial-gradient(at 0% 50%, var(--bg-mesh-3) 0px, transparent 50%),
+        #F8FAFC;
+
+    /* Glassmorphism */
+    --glass-surface: rgba(255, 255, 255, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.6);
+    --glass-blur: 16px;
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+
+    /* Text */
+    --text-main: #1E293B;
+    --text-muted: #64748B;
+    --text-light: #94A3B8;
+
+    /* Sidebar */
+    --sidebar-bg: rgba(255, 255, 255, 0.85);
+    --sidebar-border: rgba(255, 255, 255, 0.8);
+    --sidebar-hover: rgba(255, 255, 255, 0.6);
+    --sidebar-active: white;
+
+    /* Cards */
+    --card-bg: var(--glass-surface);
+    --card-border: var(--glass-border);
+    --card-hover-shadow: 0 12px 40px rgba(31, 38, 135, 0.12);
+
+    /* Inputs */
+    --input-bg: rgba(255, 255, 255, 0.5);
+    --input-border: rgba(0, 0, 0, 0.08);
+    --input-focus-bg: white;
+
+    /* Spacing & Radius */
+    --radius-sm: 12px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+
+    /* Font */
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* ========================================== 
+   DARK MODE THEME 
+   ========================================== */
+[data-theme="dark"] {
+    --bg-mesh-1: #1e1b4b;
+    --bg-mesh-2: #2d1b3d;
+    --bg-mesh-3: #1a1a2e;
+    --bg-mesh-gradient: radial-gradient(at 40% 20%, var(--bg-mesh-1) 0px, transparent 50%),
+        radial-gradient(at 80% 0%, var(--bg-mesh-2) 0px, transparent 50%),
+        radial-gradient(at 0% 50%, var(--bg-mesh-3) 0px, transparent 50%),
+        #0f172a;
+
+    --glass-surface: rgba(30, 30, 50, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+
+    --text-main: #e2e8f0;
+    --text-muted: #94a3b8;
+    --text-light: #64748b;
+
+    --sidebar-bg: rgba(15, 23, 42, 0.95);
+    --sidebar-border: rgba(255, 255, 255, 0.06);
+    --sidebar-hover: rgba(255, 255, 255, 0.05);
+    --sidebar-active: rgba(79, 70, 229, 0.15);
+
+    --card-bg: rgba(30, 30, 50, 0.7);
+    --card-border: rgba(255, 255, 255, 0.06);
+    --card-hover-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+
+    --input-bg: rgba(255, 255, 255, 0.05);
+    --input-border: rgba(255, 255, 255, 0.1);
+    --input-focus-bg: rgba(255, 255, 255, 0.08);
+
+    --primary-glow: rgba(79, 70, 229, 0.25);
+}
+
+/* ========================================== 
+   GLOBAL RESETS & TYPOGRAPHY 
+   ========================================== */
+
+body {
+    font-family: var(--font-sans);
+    background: var(--bg-mesh-gradient);
+    background-attachment: fixed;
+    background-size: cover;
+    color: var(--text-main);
+    line-height: 1.6;
+    margin: 0;
+    min-height: 100vh;
+    transition: background 0.5s ease, color 0.3s ease;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--text-main);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+}
+
+/* ========================================== 
+   LAYOUT 
+   ========================================== */
+.app-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Glassmorphic Sidebar */
+.sidebar {
+    width: 280px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: var(--sidebar-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border-right: 1px solid var(--sidebar-border);
+    display: flex;
+    flex-direction: column;
+    z-index: 50;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.02);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
+}
+
+.sidebar-header {
+    padding: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar-logo {
+    width: 42px;
+    height: 42px;
+    background: var(--gradient-primary);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: 0 10px 20px var(--primary-glow);
+}
+
+.sidebar-brand {
+    font-size: 1.25rem;
+    font-weight: 800;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.sidebar-nav {
+    padding: 24px;
+    flex: 1;
+}
+
+.nav-section-title {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-light);
+    margin-bottom: 12px;
+    margin-top: 16px;
+    padding-left: 18px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    margin-bottom: 4px;
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    border: none;
+    background: none;
+    text-decoration: none;
+}
+
+.nav-item:hover {
+    background: var(--sidebar-hover);
+    color: var(--primary);
+    transform: translateX(4px);
+}
+
+.nav-item.active {
+    background: var(--sidebar-active);
+    color: var(--primary);
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.08);
+}
+
+[data-theme="dark"] .nav-item.active {
+    color: var(--primary-soft);
+}
+
+.nav-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 40px;
+    transition: margin-left 0.3s ease;
+    padding-bottom: 80px;
+    /* Space for sticky bar or bottom nav */
+}
+
+.page-title {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+    color: var(--text-muted);
+    font-size: 1rem;
+    margin-bottom: 2.5rem;
+}
+
+/* ========================================== 
+   COMPONENTS 
+   ========================================== */
+
+/* Modern Glass Card */
+.nexus-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--glass-shadow);
+    padding: 32px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.nexus-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--card-hover-shadow);
+}
+
+/* Floating Input Fields */
+.nexus-input {
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    color: var(--text-main);
+    width: 100%;
+    transition: all 0.2s ease;
+}
+
+.nexus-input:focus {
+    background: var(--input-focus-bg);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px var(--primary-glow);
+    outline: none;
+}
+
+/* Dark mode select fix */
+[data-theme="dark"] .nexus-input option {
+    background: #1e293b;
+    color: #e2e8f0;
+}
+
+/* Gradient Buttons */
+.nexus-btn-primary {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    box-shadow: 0 8px 20px var(--primary-glow);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nexus-btn-primary:hover {
+    background: var(--gradient-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px var(--primary-glow);
+}
+
+.nexus-btn-primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ========================================== 
+   ANIMATIONS 
+   ========================================== */
+
+@keyframes floatUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: floatUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes toastIn {
+    from {
+        opacity: 0;
+        transform: translateX(100px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+.animate-toast-in {
+    animation: toastIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes toastProgress {
+    from {
+        width: 100%;
+    }
+
+    to {
+        width: 0%;
+    }
+}
+
+.animate-toast-progress {
+    animation: toastProgress 4s linear forwards;
+}
+
+@keyframes pulse-soft {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.animate-pulse-soft {
+    animation: pulse-soft 2s ease-in-out infinite;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-slide-in {
+    animation: slideIn 0.3s ease-out forwards;
+}
+
+/* Stagger children animations */
+.stagger-children>* {
+    opacity: 0;
+    animation: floatUp 0.5s ease forwards;
+}
+
+.stagger-children>*:nth-child(1) {
+    animation-delay: 0.05s;
+}
+
+.stagger-children>*:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.stagger-children>*:nth-child(3) {
+    animation-delay: 0.15s;
+}
+
+.stagger-children>*:nth-child(4) {
+    animation-delay: 0.2s;
+}
+
+.stagger-children>*:nth-child(5) {
+    animation-delay: 0.25s;
+}
+
+.stagger-children>*:nth-child(6) {
+    animation-delay: 0.3s;
+}
+
+/* ========================================== 
+   MOBILE RESPONSIVE (Hamburger Sidebar)
+   ========================================== */
+
+.mobile-menu-btn {
+    display: none;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 60;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px var(--primary-glow);
+    transition: transform 0.2s ease;
+}
+
+.mobile-menu-btn:hover {
+    transform: scale(1.05);
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 40;
+}
+
+@media (max-width: 768px) {
+    .mobile-menu-btn {
+        display: none;
+        /* Hide hamburger, use bottom nav */
+    }
+
+    .sidebar {
+        display: none;
+        /* Hide sidebar completely */
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay.open {
+        display: none;
+        /* No overlay needed */
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 24px 16px 140px;
+        /* Extra padding for sticky bar AND bottom nav */
+    }
+
+    .top-header {
+        padding-top: 16px !important;
+        margin-bottom: 24px;
+    }
+
+    .mobile-bottom-nav {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    }
+}
+
+@media (max-width: 640px) {
+    .page-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* ========================================== 
+   SKELETON LOADING 
+   ========================================== */
+.skeleton {
+    background: linear-gradient(90deg,
+            rgba(200, 200, 200, 0.2) 25%,
+            rgba(200, 200, 200, 0.4) 50%,
+            rgba(200, 200, 200, 0.2) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: var(--radius-md);
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* ========================================== 
+   MODAL 
+   ========================================== */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.2s ease;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-xl);
+    padding: 32px;
+    max-width: 90vw;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    animation: scaleIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ========================================== 
+   SCROLLBAR & UTILITIES
+   ========================================== */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(128, 128, 128, 0.2);
+    border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(128, 128, 128, 0.35);
+}
+
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* ========================================== 
+   MOBILE BOTTOM NAVIGATION & STICKY ACTION BAR
+   ========================================== */
+.mobile-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--card-border);
+    z-index: 50;
+    padding-bottom: env(safe-area-inset-bottom);
+    /* iOS safe area */
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.mobile-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 4px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.65rem;
+    font-weight: 600;
+    gap: 4px;
+    transition: all 0.2s;
+}
+
+.mobile-nav-item.active {
+    color: var(--primary);
+}
+
+.mobile-nav-item svg {
+    width: 20px;
+    height: 20px;
+}
+
+.sticky-bottom-action-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--card-border);
+    z-index: 45;
+    /* Below bottom nav if both exist, but bottom nav handles positioning */
+    padding: 16px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+    box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.1);
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sticky-bottom-action-bar.visible {
+    transform: translateY(0);
+}
+
+/* Adjust action bar when mobile nav is present */
+@media (max-width: 768px) {
+    .sticky-bottom-action-bar.has-nav {
+        bottom: calc(60px + env(safe-area-inset-bottom));
+        /* Approximate height of bottom nav */
+        padding-bottom: 16px;
+        /* Reset padding since it's not at the very bottom */
+    }
+}
+
+/* ========================================== 
+   PRINT OVERRIDES 
+   ========================================== */
+@media print {
+
+    .sidebar,
+    .top-header,
+    .print\:hidden {
+        display: none !important;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        padding: 0 !important;
+    }
+
+    .nexus-card {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+        background: white !important;
+    }
+
+    body {
+        background: white !important;
+    }
+}
+
+/* Dark mode helper classes */
+[data-theme="dark"] .dark\:text-gray-100 {
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] .dark\:text-gray-200 {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .dark\:text-gray-300 {
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] .dark\:text-gray-400 {
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .dark\:bg-gray-800 {
+    background-color: #1e293b;
+}
+
+[data-theme="dark"] .dark\:bg-gray-700 {
+    background-color: #334155;
+}
+
+[data-theme="dark"] .dark\:border-gray-700 {
+    border-color: #334155;
+}
