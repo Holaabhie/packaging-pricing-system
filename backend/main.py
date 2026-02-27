@@ -44,6 +44,14 @@ def get_rates():
 def update_rates(rates: Dict[str, float]):
     return db.update_rates(rates)
 
+@app.get("/api/config")
+def get_config():
+    return db.get_config()
+
+@app.post("/api/config")
+def update_config(config: Dict[str, float]):
+    return db.update_config(config)
+
 @app.get("/api/quotations")
 def get_quotations():
     return db.get_quotations()

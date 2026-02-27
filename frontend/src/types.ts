@@ -49,6 +49,12 @@ export interface ProductRequirements {
   printing_method: PrintingMethod;
   cylinder_cost_per_unit: number;
   margin_percent: number;
+
+  // Operational Cost Fields
+  wastage_percent: number;
+  labor_cost_per_kg: number;
+  machine_usage_cost_per_kg: number;
+
   printing_cost_per_kg_override?: number;
   lamination_cost_per_kg_override?: number;
 }
@@ -65,6 +71,9 @@ export interface CostBreakdown {
   lamination_cost_per_kg: number;
   pouching_cost_per_kg: number;
   overhead_cost_per_kg: number;
+  labor_cost_per_kg: number;
+  machine_usage_cost_per_kg: number;
+  wastage_cost_per_kg: number;
   cylinder_cost_total: number;
   cylinder_cost_amortized_per_kg: number;
 

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Upload, Camera, Loader, Check, Palette, X } from 'lucide-react';
+import imageCompression from 'browser-image-compression';
 
 interface ColorResult {
     hex: string;
@@ -19,17 +20,25 @@ export const AIColorScanner: React.FC<AIColorScannerProps> = ({ onColorsDetected
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFile = async (file: File) => {
-        // Create preview
-        const reader = new FileReader();
-        reader.onload = (e) => setImagePreview(e.target?.result as string);
-        reader.readAsDataURL(file);
-
-        // Upload and analyze
         setLoading(true);
-        const formData = new FormData();
-        formData.append('file', file);
-
         try {
+            // Compress image
+            const options = {
+                maxSizeMB: 1,
+                maxWidthOrHeight: 800,
+                useWebWorker: true
+            };
+            const compressedFile = await imageCompression(file, options);
+
+            // Create preview
+            const reader = new FileReader();
+            reader.onload = (e) => setImagePreview(e.target?.result as string);
+            reader.readAsDataURL(compressedFile);
+
+            // Upload and analyze
+            const formData = new FormData();
+            formData.append('file', compressedFile);
+
             const response = await fetch('http://localhost:8000/api/analyze-image', {
                 method: 'POST',
                 body: formData,

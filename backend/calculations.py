@@ -154,7 +154,9 @@ class CostCalculator:
             lamination_cost +
             cls.POUCHING_COST_PER_KG +
             cls.SLITTING_COST_PER_KG +
-            cls.OVERHEADS_PER_KG
+            cls.OVERHEADS_PER_KG +
+            req.labor_cost_per_kg +
+            req.machine_usage_cost_per_kg
         )
         
         # 6. Cylinder / Plate Costs
@@ -169,8 +171,12 @@ class CostCalculator:
             if total_job_weight_kg > 0:
                 cylinder_cost_amortized_per_kg = cylinder_cost_total / total_job_weight_kg
         
+        # Calculate Wastage Cost
+        base_cost_for_wastage = raw_material_cost_per_kg + conversion_cost + cylinder_cost_amortized_per_kg
+        wastage_cost_per_kg = base_cost_for_wastage * (req.wastage_percent / 100.0)
+        
         # 7. Final Costs
-        total_cost_per_kg = raw_material_cost_per_kg + conversion_cost + cylinder_cost_amortized_per_kg
+        total_cost_per_kg = base_cost_for_wastage + wastage_cost_per_kg
         
         cost_per_1000_pouches = total_cost_per_kg * weight_per_1000_pouches_kg
         
@@ -192,6 +198,9 @@ class CostCalculator:
             lamination_cost_per_kg=round(lamination_cost, 2),
             pouching_cost_per_kg=round(cls.POUCHING_COST_PER_KG, 2),
             overhead_cost_per_kg=round(cls.OVERHEADS_PER_KG + cls.SLITTING_COST_PER_KG, 2),
+            labor_cost_per_kg=round(req.labor_cost_per_kg, 2),
+            machine_usage_cost_per_kg=round(req.machine_usage_cost_per_kg, 2),
+            wastage_cost_per_kg=round(wastage_cost_per_kg, 2),
             
             cylinder_cost_total=round(cylinder_cost_total, 2),
             cylinder_cost_amortized_per_kg=round(cylinder_cost_amortized_per_kg, 2),

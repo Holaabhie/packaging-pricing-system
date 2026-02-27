@@ -32,6 +32,15 @@ class Database:
                 "PAPER": 80,
             }
             self.db.rates.insert_one({"_id": "current", "rates": default_rates})
+            
+        # Initialize default global configs if empty
+        if self.db.config.count_documents({}) == 0:
+            default_config = {
+                "wastage_percent": 5.0,
+                "labor_cost_per_kg": 8.0,
+                "machine_usage_cost_per_kg": 15.0
+            }
+            self.db.config.insert_one({"_id": "current", "config": default_config})
 
     def get_rates(self) -> Dict[str, float]:
         doc = self.db.rates.find_one({"_id": "current"})
@@ -42,6 +51,16 @@ class Database:
         current_rates.update(rates)
         self.db.rates.update_one({"_id": "current"}, {"$set": {"rates": current_rates}}, upsert=True)
         return current_rates
+
+    def get_config(self) -> Dict[str, float]:
+        doc = self.db.config.find_one({"_id": "current"})
+        return doc.get("config", {}) if doc else {}
+
+    def update_config(self, config: Dict[str, float]):
+        current_config = self.get_config()
+        current_config.update(config)
+        self.db.config.update_one({"_id": "current"}, {"$set": {"config": current_config}}, upsert=True)
+        return current_config
 
     def save_quotation(self, requirements: dict, breakdown: dict, client_name: str = "Unknown"):
         # Generate ID based on current max

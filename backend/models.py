@@ -66,9 +66,17 @@ class ProductRequirements(BaseModel):
     cylinder_cost_per_unit: float = Field(3500, ge=0) # Avg cylinder cost
     margin_percent: float = Field(20.0, ge=0, le=100) # Profit margin percentage
     
+    # New Operational Costs
+    wastage_percent: float = Field(5.0, ge=0, le=100) # Wastage percentage
+    labor_cost_per_kg: float = Field(8.0, ge=0) # Labor cost per kg
+    machine_usage_cost_per_kg: float = Field(15.0, ge=0) # Machine usage cost per kg
+    
     # Optional overrides (per-job) for operational rates (INR/kg)
     printing_cost_per_kg_override: Optional[float] = Field(None, ge=0)
     lamination_cost_per_kg_override: Optional[float] = Field(None, ge=0)
+
+    # Role
+    role: str = Field("operator", description="Role of the user creating the requirement. Can be operator or admin.")
 
 class CostBreakdown(BaseModel):
     total_gsm: float
@@ -82,6 +90,9 @@ class CostBreakdown(BaseModel):
     lamination_cost_per_kg: float
     pouching_cost_per_kg: float
     overhead_cost_per_kg: float
+    labor_cost_per_kg: float
+    machine_usage_cost_per_kg: float
+    wastage_cost_per_kg: float
     cylinder_cost_total: float
     cylinder_cost_amortized_per_kg: float
     
