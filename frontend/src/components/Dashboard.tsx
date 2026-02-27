@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { TrendingUp, FileText, Percent, IndianRupee, Package, Layers, ArrowRight, BarChart3, Activity } from 'lucide-react';
+import { apiFetch } from '../utils/apiConfig';
 
 interface DashboardStats {
     total_quotations: number;
@@ -77,7 +78,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('http://localhost:8000/api/dashboard/stats')
+        apiFetch('/api/dashboard/stats')
             .then(res => res.json())
             .then(data => setStats(data))
             .catch(() => { })

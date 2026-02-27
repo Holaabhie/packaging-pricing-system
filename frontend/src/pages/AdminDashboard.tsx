@@ -1,4 +1,3 @@
-import React from 'react';
 import { Dashboard } from '../components/Dashboard';
 import { useNavigate } from 'react-router-dom';
 

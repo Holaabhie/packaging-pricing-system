@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Settings, Save, RefreshCw, AlertCircle } from 'lucide-react';
 import { useToast } from '../components/ToastProvider';
+import { apiFetch } from '../utils/apiConfig';
 
 interface Config {
     wastage_percent: number;
@@ -24,7 +25,7 @@ export function AdminSettings() {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch('http://localhost:8000/api/config');
+            const res = await apiFetch('/api/config');
             if (!res.ok) throw new Error('Failed to load configuration');
             const data = await res.json();
             setConfig({
@@ -44,7 +45,7 @@ export function AdminSettings() {
         if (!config) return;
         setSaving(true);
         try {
-            const res = await fetch('http://localhost:8000/api/config', {
+            const res = await apiFetch('/api/config', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(config)

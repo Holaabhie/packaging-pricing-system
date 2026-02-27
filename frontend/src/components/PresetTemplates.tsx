@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Zap } from 'lucide-react';
 import type { ProductRequirements } from '../types';
 
@@ -14,26 +14,78 @@ interface PresetTemplatesProps {
     onSelect: (config: ProductRequirements) => void;
 }
 
-export const PresetTemplates: React.FC<PresetTemplatesProps> = ({ onSelect }) => {
-    const [presets, setPresets] = useState<Preset[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [activeId, setActiveId] = useState<string | null>(null);
+// Inline presets — no backend fetch needed
+const PRESETS: Preset[] = [
+    {
+        id: 'snacks', name: 'Snacks & Chips', icon: '🍿',
+        description: 'Namkeen, chips, kurkure — nitrogen-flushed MET barrier pouches',
+        config: {
+            pouch_type: 'CENTER_SEAL' as any, width_mm: 160, height_mm: 240, gusset_mm: 50,
+            number_of_colors: 8, printing_method: 'ROTOGRAVURE' as any, cylinder_cost_per_unit: 5000,
+            quantity_pieces: 200000, margin_percent: 20, wastage_percent: 5, labor_cost_per_kg: 8, machine_usage_cost_per_kg: 15,
+            film_structure: { layers: [{ material: 'BOPP' as any, thickness_micron: 20 }, { material: 'MET_BOPP' as any, thickness_micron: 20 }, { material: 'LDPE' as any, thickness_micron: 50 }] }
+        }
+    },
+    {
+        id: 'pharma', name: 'Pharma & Healthcare', icon: '💊',
+        description: 'Tablets, sachets, ORS — high-barrier AL foil laminates',
+        config: {
+            pouch_type: 'THREE_SIDE_SEAL' as any, width_mm: 80, height_mm: 120, gusset_mm: 0,
+            number_of_colors: 4, printing_method: 'ROTOGRAVURE' as any, cylinder_cost_per_unit: 4500,
+            quantity_pieces: 500000, margin_percent: 30, wastage_percent: 5, labor_cost_per_kg: 8, machine_usage_cost_per_kg: 15,
+            film_structure: { layers: [{ material: 'PET' as any, thickness_micron: 12 }, { material: 'AL_FOIL' as any, thickness_micron: 9 }, { material: 'LDPE' as any, thickness_micron: 37.5 }] }
+        }
+    },
+    {
+        id: 'sweets', name: 'Sweets & Mithai', icon: '🍬',
+        description: 'Laddu, barfi, bakery — premium printed trays & pillow packs',
+        config: {
+            pouch_type: 'CENTER_SEAL' as any, width_mm: 200, height_mm: 150, gusset_mm: 0,
+            number_of_colors: 7, printing_method: 'ROTOGRAVURE' as any, cylinder_cost_per_unit: 5500,
+            quantity_pieces: 100000, margin_percent: 25, wastage_percent: 5, labor_cost_per_kg: 8, machine_usage_cost_per_kg: 15,
+            film_structure: { layers: [{ material: 'BOPP' as any, thickness_micron: 20 }, { material: 'MET_BOPP' as any, thickness_micron: 20 }, { material: 'CPP' as any, thickness_micron: 30 }] }
+        }
+    },
+    {
+        id: 'mop_detergent', name: 'MOP & Detergents', icon: '🧴',
+        description: 'Surf, shampoo sachets, phenyl — heavy-duty liquid-resistant pouches',
+        config: {
+            pouch_type: 'THREE_SIDE_SEAL' as any, width_mm: 120, height_mm: 175, gusset_mm: 0,
+            number_of_colors: 5, printing_method: 'ROTOGRAVURE' as any, cylinder_cost_per_unit: 4000,
+            quantity_pieces: 300000, margin_percent: 18, wastage_percent: 5, labor_cost_per_kg: 8, machine_usage_cost_per_kg: 15,
+            film_structure: { layers: [{ material: 'PET' as any, thickness_micron: 12 }, { material: 'NYLON' as any, thickness_micron: 15 }, { material: 'LDPE' as any, thickness_micron: 80 }] }
+        }
+    },
+    {
+        id: 'dairy', name: 'Dairy & Beverages', icon: '🥛',
+        description: 'Milk, lassi, juice — liquid-fill stand-up & pillow pouches',
+        config: {
+            pouch_type: 'STAND_UP_POUCH' as any, width_mm: 140, height_mm: 220, gusset_mm: 60,
+            number_of_colors: 6, printing_method: 'ROTOGRAVURE' as any, cylinder_cost_per_unit: 5000,
+            quantity_pieces: 200000, margin_percent: 22, wastage_percent: 5, labor_cost_per_kg: 8, machine_usage_cost_per_kg: 15,
+            film_structure: { layers: [{ material: 'PET' as any, thickness_micron: 12 }, { material: 'AL_FOIL' as any, thickness_micron: 7 }, { material: 'LDPE' as any, thickness_micron: 75 }] }
+        }
+    },
+    {
+        id: 'agro', name: 'Agro & Fertilizers', icon: '🌾',
+        description: 'Seeds, fertilizers, pesticides — heavy-gauge multi-layer sacks',
+        config: {
+            pouch_type: 'STAND_UP_POUCH' as any, width_mm: 250, height_mm: 350, gusset_mm: 80,
+            number_of_colors: 3, printing_method: 'FLEXO' as any, cylinder_cost_per_unit: 3000,
+            quantity_pieces: 50000, margin_percent: 15, wastage_percent: 5, labor_cost_per_kg: 8, machine_usage_cost_per_kg: 15,
+            film_structure: { layers: [{ material: 'BOPP' as any, thickness_micron: 25 }, { material: 'LDPE' as any, thickness_micron: 100 }] }
+        }
+    },
+];
 
-    useEffect(() => {
-        fetch('http://localhost:8000/api/presets')
-            .then(res => res.json())
-            .then(data => setPresets(data))
-            .catch(() => { })
-            .finally(() => setLoading(false));
-    }, []);
+export const PresetTemplates: React.FC<PresetTemplatesProps> = ({ onSelect }) => {
+    const [activeId, setActiveId] = useState<string | null>(null);
 
     const handleSelect = (preset: Preset) => {
         setActiveId(preset.id);
         onSelect(preset.config);
         setTimeout(() => setActiveId(null), 1500);
     };
-
-    if (loading || presets.length === 0) return null;
 
     return (
         <div className="nexus-card">
@@ -45,7 +97,7 @@ export const PresetTemplates: React.FC<PresetTemplatesProps> = ({ onSelect }) =>
                 <span className="ml-2 text-xs font-normal text-gray-400">One-click setup</span>
             </h3>
             <div className="flex overflow-x-auto snap-x hide-scrollbar gap-3 pb-2 -mx-1 px-1">
-                {presets.map((preset) => (
+                {PRESETS.map((preset) => (
                     <button
                         key={preset.id}
                         onClick={() => handleSelect(preset)}

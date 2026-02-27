@@ -12,6 +12,102 @@ interface AIColorScannerProps {
     onColorsDetected: (count: number) => void;
 }
 
+/**
+ * Simple K-means clustering for color extraction.
+ * Runs entirely client-side using Canvas API — no backend needed.
+ */
+function kMeans(pixels: number[][], k: number, maxIter = 15): { centers: number[][]; labels: number[] } {
+    // Initialize centers randomly from the pixel set
+    const shuffled = [...pixels].sort(() => Math.random() - 0.5);
+    let centers = shuffled.slice(0, k).map(p => [...p]);
+    let labels = new Array(pixels.length).fill(0);
+
+    for (let iter = 0; iter < maxIter; iter++) {
+        // Assign labels
+        for (let i = 0; i < pixels.length; i++) {
+            let minDist = Infinity;
+            for (let c = 0; c < k; c++) {
+                const dist =
+                    (pixels[i][0] - centers[c][0]) ** 2 +
+                    (pixels[i][1] - centers[c][1]) ** 2 +
+                    (pixels[i][2] - centers[c][2]) ** 2;
+                if (dist < minDist) {
+                    minDist = dist;
+                    labels[i] = c;
+                }
+            }
+        }
+
+        // Update centers
+        const sums = Array.from({ length: k }, () => [0, 0, 0]);
+        const counts = new Array(k).fill(0);
+        for (let i = 0; i < pixels.length; i++) {
+            const l = labels[i];
+            sums[l][0] += pixels[i][0];
+            sums[l][1] += pixels[i][1];
+            sums[l][2] += pixels[i][2];
+            counts[l]++;
+        }
+        for (let c = 0; c < k; c++) {
+            if (counts[c] > 0) {
+                centers[c] = [sums[c][0] / counts[c], sums[c][1] / counts[c], sums[c][2] / counts[c]];
+            }
+        }
+    }
+
+    return { centers, labels };
+}
+
+function rgbToHex(r: number, g: number, b: number): string {
+    return '#' + [r, g, b].map(c => Math.round(c).toString(16).padStart(2, '0')).join('');
+}
+
+function analyzeImageClientSide(imageElement: HTMLImageElement, numColors = 5): ColorResult[] {
+    const canvas = document.createElement('canvas');
+    // Resize to max 100x100 for fast processing
+    const maxDim = 100;
+    const scale = Math.min(maxDim / imageElement.naturalWidth, maxDim / imageElement.naturalHeight, 1);
+    canvas.width = Math.round(imageElement.naturalWidth * scale);
+    canvas.height = Math.round(imageElement.naturalHeight * scale);
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return [];
+
+    ctx.drawImage(imageElement, 0, 0, canvas.width, canvas.height);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    // Extract pixels (skip fully transparent ones)
+    const pixels: number[][] = [];
+    for (let i = 0; i < data.length; i += 4) {
+        if (data[i + 3] > 128) { // alpha > 50%
+            pixels.push([data[i], data[i + 1], data[i + 2]]);
+        }
+    }
+
+    if (pixels.length === 0) return [];
+
+    const k = Math.min(numColors, pixels.length);
+    const { centers, labels } = kMeans(pixels, k);
+
+    // Count labels
+    const counts: Record<number, number> = {};
+    for (const l of labels) {
+        counts[l] = (counts[l] || 0) + 1;
+    }
+
+    // Sort by count descending
+    const sorted = Object.entries(counts)
+        .map(([idx, count]) => ({ idx: Number(idx), count }))
+        .sort((a, b) => b.count - a.count);
+
+    return sorted.map(({ idx, count }) => ({
+        hex: rgbToHex(centers[idx][0], centers[idx][1], centers[idx][2]),
+        percentage: Math.round((count / pixels.length) * 1000) / 10,
+        rgb: centers[idx].map(c => Math.round(c)),
+    }));
+}
+
 export const AIColorScanner: React.FC<AIColorScannerProps> = ({ onColorsDetected }) => {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [colors, setColors] = useState<ColorResult[]>([]);
@@ -32,27 +128,27 @@ export const AIColorScanner: React.FC<AIColorScannerProps> = ({ onColorsDetected
 
             // Create preview
             const reader = new FileReader();
-            reader.onload = (e) => setImagePreview(e.target?.result as string);
+            reader.onload = (e) => {
+                const dataUrl = e.target?.result as string;
+                setImagePreview(dataUrl);
+
+                // Analyze colors client-side using Canvas
+                const img = new Image();
+                img.onload = () => {
+                    const detectedColors = analyzeImageClientSide(img, 5);
+                    setColors(detectedColors);
+                    setLoading(false);
+                };
+                img.onerror = () => {
+                    console.error('Failed to load image for analysis');
+                    setLoading(false);
+                };
+                img.src = dataUrl;
+            };
             reader.readAsDataURL(compressedFile);
-
-            // Upload and analyze
-            const formData = new FormData();
-            formData.append('file', compressedFile);
-
-            const response = await fetch('http://localhost:8000/api/analyze-image', {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (!response.ok) throw new Error('Analysis failed');
-
-            const data = await response.json();
-            setColors(data.colors);
-            // Optional: Auto-update parent or let user confirm
         } catch (error) {
             console.error(error);
             alert('Failed to analyze image');
-        } finally {
             setLoading(false);
         }
     };

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Save, Plus, X, Check } from 'lucide-react';
 import { useToast } from './ToastProvider';
+import { apiFetch } from '../utils/apiConfig';
 
 const materialEmojis: Record<string, string> = {
   PET: '🔷', BOPP: '🟣', MET_PET: '🪞', MET_BOPP: '✨',
@@ -23,7 +24,7 @@ export const MaterialLibrary: React.FC = () => {
   const fetchRates = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/rates');
+      const response = await apiFetch('/api/rates');
       if (!response.ok) throw new Error('Failed to fetch rates');
       const data = await response.json();
       setRates(data);
@@ -41,7 +42,7 @@ export const MaterialLibrary: React.FC = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const response = await fetch('http://localhost:8000/api/rates', {
+      const response = await apiFetch('/api/rates', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(rates)

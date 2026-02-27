@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FileText, Calendar, Search, Trash2, ChevronDown, ChevronUp, GitCompare, X } from 'lucide-react';
 import type { CostBreakdown, ProductRequirements } from '../types';
 import { useToast } from './ToastProvider';
+import { apiFetch } from '../utils/apiConfig';
 
 interface Quotation {
   id: number;
@@ -26,7 +27,7 @@ export const QuotationsList: React.FC = () => {
 
   const fetchQuotations = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/quotations');
+      const response = await apiFetch('/api/quotations');
       if (response.ok) {
         const data = await response.json();
         setQuotations(data.reverse());
@@ -40,7 +41,7 @@ export const QuotationsList: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/quotations/${id}`, { method: 'DELETE' });
+      const response = await apiFetch(`/api/quotations/${id}`, { method: 'DELETE' });
       if (response.ok) {
         setQuotations(prev => prev.filter(q => q.id !== id));
         setCompareIds(prev => prev.filter(cid => cid !== id));

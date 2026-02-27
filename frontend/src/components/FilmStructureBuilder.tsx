@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Plus, Trash2, Layers } from 'lucide-react';
 import { MaterialType } from '../types';
 import type { Layer } from '../types';
+import { apiFetch } from '../utils/apiConfig';
 
 interface FilmStructureBuilderProps {
   layers: Layer[];
@@ -27,7 +28,7 @@ export const FilmStructureBuilder: React.FC<FilmStructureBuilderProps> = ({ laye
   useEffect(() => {
     const fetchMaterials = async () => {
       try {
-        const res = await fetch('http://localhost:8000/api/rates');
+        const res = await apiFetch('/api/rates');
         if (res.ok) {
           const data = await res.json();
           const allKeys = Object.keys(data);

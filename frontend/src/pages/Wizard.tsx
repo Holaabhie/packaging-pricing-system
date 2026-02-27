@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FilmStructureBuilder } from '../components/FilmStructureBuilder';
 import { CostResult } from '../components/CostResult';
 import { PresetTemplates } from '../components/PresetTemplates';
@@ -6,7 +6,9 @@ import { AIColorScanner } from '../components/AIColorScanner';
 import { useToast } from '../components/ToastProvider';
 import { MaterialType, PouchType, PrintingMethod } from '../types';
 import type { ProductRequirements, CostBreakdown } from '../types';
-import { Package, Ruler, Settings, IndianRupee, Percent, ChevronRight, ChevronLeft, CheckCircle2 } from 'lucide-react';
+import { calculateCost } from '../utils/calculations';
+import { apiFetch } from '../utils/apiConfig';
+import { Package, Ruler, Settings, Percent, ChevronRight, ChevronLeft, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -74,13 +76,8 @@ export function Wizard() {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch('http://localhost:8000/api/calculate-cost', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requirements),
-            });
-            if (!response.ok) throw new Error('Calculation failed');
-            const data = await response.json();
+            // Client-side calculation — no backend needed
+            const data = calculateCost(requirements);
             setResult(data);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An error occurred');
@@ -97,7 +94,7 @@ export function Wizard() {
 
         setSaving(true);
         try {
-            const response = await fetch('http://localhost:8000/api/quotations', {
+            const response = await apiFetch('/api/quotations', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
