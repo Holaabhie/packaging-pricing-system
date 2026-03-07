@@ -325,7 +325,11 @@ export function Wizard() {
                                     value={requirements.printing_method}
                                     onChange={(e) => setRequirements({ ...requirements, printing_method: e.target.value as PrintingMethod })}
                                     className="nexus-input"
-                                />
+                                >
+                                    {Object.values(PrintingMethod).map(method => (
+                                        <option key={method} value={method}>{method.replace(/_/g, ' ')}</option>
+                                    ))}
+                                </select>
                             </div>
 
                             {/* Number of Colors */}
@@ -439,6 +443,7 @@ export function Wizard() {
                         <CostResult
                             breakdown={result}
                             loading={loading}
+                            quantityMode={quantityMode}
                             onSave={handleSaveQuotation}
                             onPrint={handlePrint}
                             saving={saving}

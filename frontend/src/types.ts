@@ -83,5 +83,6 @@ export interface CostBreakdown {
   selling_price_per_1000: number;
   cost_per_pouch: number;
   selling_price_per_pouch: number;
+  selling_price_per_kg: number;
   margin_percent: number;
 }

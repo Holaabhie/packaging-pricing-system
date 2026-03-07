@@ -164,6 +164,7 @@ export const calculateCost = (req: ProductRequirements, rates: Record<string, nu
         selling_price_per_1000: Number(selling_price.toFixed(2)),
         cost_per_pouch: Number((cost_per_1000_pouches / 1000 || 0).toFixed(4)),
         selling_price_per_pouch: Number((selling_price / 1000 || 0).toFixed(4)),
+        selling_price_per_kg: Number((total_cost_per_kg * (1 + (req.margin_percent / 100))).toFixed(2)),
         margin_percent: req.margin_percent
     };
 };

@@ -6,12 +6,13 @@ import { CostPieChart } from './CostPieChart';
 interface CostResultProps {
   breakdown: CostBreakdown | null;
   loading: boolean;
+  quantityMode: 'kg' | 'pieces';
   onSave?: () => void;
   onPrint?: () => void;
   saving?: boolean;
 }
 
-export const CostResult: React.FC<CostResultProps> = ({ breakdown, loading, onSave, onPrint, saving }) => {
+export const CostResult: React.FC<CostResultProps> = ({ breakdown, loading, quantityMode, onSave, onPrint, saving }) => {
   if (loading) {
     return (
       <div className="nexus-card h-full flex flex-col items-center justify-center min-h-[400px] gap-3">
@@ -74,10 +75,12 @@ export const CostResult: React.FC<CostResultProps> = ({ breakdown, loading, onSa
             <div className="absolute -left-2 -bottom-6 w-16 h-16 rounded-full bg-white/5" />
             <div className="flex items-center gap-1.5 text-indigo-100 mb-1 relative z-10">
               <IndianRupee className="w-3.5 h-3.5" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">Selling Price / 1000</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider">
+                {quantityMode === 'kg' ? 'Selling Price / KG' : 'Selling Price / 1000'}
+              </span>
             </div>
             <div className="text-2xl font-black text-white relative z-10" style={{ fontFamily: 'var(--font-mono)' }}>
-              ₹{breakdown.selling_price_per_1000}
+              ₹{quantityMode === 'kg' ? breakdown.selling_price_per_kg : breakdown.selling_price_per_1000}
             </div>
           </div>
         </div>
