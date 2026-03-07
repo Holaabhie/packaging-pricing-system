@@ -163,7 +163,7 @@ export function Wizard() {
                                 <div className={`step-circle ${isCompleted ? 'completed' : isCurrent ? 'active' : ''}`}>
                                     {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : step.id}
                                 </div>
-                                <span className={`text-xs font-bold hidden md:block transition-colors ${isCurrent ? 'text-indigo-500' : isCompleted ? 'text-emerald-500' : 'text-gray-400 dark:text-gray-600'}`}>
+                                <span className={`text-[10px] md:text-xs font-bold transition-colors ${isCurrent ? 'text-indigo-500' : isCompleted ? 'text-emerald-500' : 'text-gray-400 dark:text-gray-600'}`}>
                                     {step.title}
                                 </span>
                             </div>
@@ -448,11 +448,11 @@ export function Wizard() {
             </div>
 
             {/* Stepper Navigation Actions */}
-            <div className="mt-8 flex justify-between items-center print:hidden border-t border-gray-200 dark:border-gray-800 pt-6">
+            <div className="mt-8 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 print:hidden pt-6" style={{ borderTop: '1px solid rgba(99,102,241,0.08)' }}>
                 <button
                     onClick={prevStep}
                     disabled={currentStep === 1}
-                    className="flex items-center gap-2 px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center justify-center gap-2 px-6 py-3 font-semibold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors order-2 sm:order-1 rounded-xl" style={{ border: '1px solid var(--card-border)' }}
                 >
                     <ChevronLeft className="w-5 h-5" /> Back
                 </button>
@@ -460,7 +460,7 @@ export function Wizard() {
                 {currentStep < 4 ? (
                     <button
                         onClick={nextStep}
-                        className="nexus-btn-primary px-8"
+                        className="nexus-btn-primary px-8 order-1 sm:order-2"
                     >
                         Next <ChevronRight className="w-5 h-5" />
                     </button>
@@ -468,7 +468,7 @@ export function Wizard() {
                     <button
                         onClick={handleCalculate}
                         disabled={loading}
-                        className="nexus-btn-primary px-8 shadow-indigo-500/30"
+                        className="nexus-btn-primary px-8 shadow-indigo-500/30 order-1 sm:order-2"
                     >
                         {loading ? 'Recalculating...' : 'Refresh Quote'}
                     </button>

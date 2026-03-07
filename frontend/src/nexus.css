@@ -705,7 +705,9 @@ h6 {
 }
 
 /* ========================================== 
-   MOBILE RESPONSIVE
+   RESPONSIVE SCREEN ADAPTOR
+   Smooth transitions: Desktop → Tablet → Mobile
+   Breakpoints: 1280px, 1024px, 768px, 480px
    ========================================== */
 
 .mobile-menu-btn {
@@ -740,6 +742,61 @@ h6 {
     z-index: 40;
 }
 
+/* ── Large Desktop (≤1280px) — Compact sidebar ── */
+@media (max-width: 1280px) {
+    .main-content {
+        padding: 28px 28px;
+    }
+}
+
+/* ── Tablet Landscape (≤1024px) — Narrower sidebar ── */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 240px;
+    }
+
+    .sidebar::after {
+        display: none;
+    }
+
+    .main-content {
+        margin-left: 240px;
+        padding: 24px 20px;
+    }
+
+    .sidebar-header {
+        padding: 20px 16px;
+    }
+
+    .sidebar-nav {
+        padding: 12px 10px;
+    }
+
+    .nav-item {
+        padding: 10px 14px;
+        font-size: 0.84rem;
+    }
+
+    .nexus-card {
+        padding: 20px;
+    }
+
+    .cyber-metric {
+        padding: 16px;
+    }
+
+    .cyber-metric .metric-value {
+        font-size: 1.4rem;
+    }
+
+    .step-circle {
+        width: 36px;
+        height: 36px;
+        font-size: 0.8rem;
+    }
+}
+
+/* ── Tablet Portrait / Small Screens (≤768px) — Full mobile layout ── */
 @media (max-width: 768px) {
     .mobile-menu-btn {
         display: none;
@@ -759,24 +816,167 @@ h6 {
 
     .main-content {
         margin-left: 0;
-        padding: 20px 16px 140px;
+        padding: 16px 14px 140px;
     }
 
     .top-header {
-        padding-top: 16px !important;
-        margin-bottom: 20px;
+        padding-top: 8px !important;
+        margin-bottom: 16px;
     }
 
+    .page-title {
+        font-size: 1.5rem;
+    }
+
+    .page-subtitle {
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Cards — tighter padding */
+    .nexus-card {
+        padding: 16px;
+        border-radius: var(--radius-md);
+    }
+
+    .nexus-card:hover {
+        transform: none;
+        /* Disable hover lift on touch */
+    }
+
+    /* Inputs — bigger touch targets */
+    .nexus-input {
+        padding: 14px 16px;
+        font-size: 1rem;
+        border-radius: var(--radius-sm);
+        min-height: 48px;
+    }
+
+    /* Buttons — full width friendly */
+    .nexus-btn-primary {
+        padding: 14px 20px;
+        font-size: 0.95rem;
+        width: 100%;
+        justify-content: center;
+        min-height: 48px;
+    }
+
+    /* Stepper — compact circles */
+    .step-circle {
+        width: 32px;
+        height: 32px;
+        font-size: 0.75rem;
+    }
+
+    .step-circle.active::after {
+        inset: -4px;
+    }
+
+    .step-line {
+        height: 2px;
+    }
+
+    /* Cyber Metrics — stackable */
+    .cyber-metric {
+        padding: 14px;
+    }
+
+    .cyber-metric .metric-value {
+        font-size: 1.3rem;
+    }
+
+    .cyber-metric .metric-label {
+        font-size: 0.6rem;
+    }
+
+    /* Layer cards — stacked layout */
+    .layer-card {
+        padding: 14px 14px 14px 18px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .layer-card .flex-1,
+    .layer-card .w-28 {
+        width: 100%;
+    }
+
+    .layer-connector {
+        height: 8px;
+    }
+
+    /* Modal — full width */
+    .modal-content {
+        max-width: 95vw;
+        padding: 20px;
+        border-radius: var(--radius-lg);
+    }
+
+    /* Bottom nav visible */
     .mobile-bottom-nav {
         display: flex;
         justify-content: space-around;
         align-items: center;
     }
+
+    /* Neon divider — subtler on mobile */
+    .neon-divider {
+        margin: 16px 0;
+    }
 }
 
-@media (max-width: 640px) {
+/* ── Small Mobile (≤480px) — Maximum compactness ── */
+@media (max-width: 480px) {
+    .main-content {
+        padding: 12px 10px 140px;
+    }
+
     .page-title {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
+    }
+
+    .page-subtitle {
+        font-size: 0.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .nexus-card {
+        padding: 14px;
+        border-radius: var(--radius-sm);
+    }
+
+    .nexus-input {
+        padding: 12px 14px;
+        font-size: 0.95rem;
+    }
+
+    /* Stepper — minimal */
+    .step-circle {
+        width: 28px;
+        height: 28px;
+        font-size: 0.7rem;
+        border-width: 1.5px;
+    }
+
+    .step-circle.active::after {
+        display: none;
+        /* remove pulse ring on tiny screens */
+    }
+
+    .cyber-metric .metric-value {
+        font-size: 1.15rem;
+    }
+
+    /* Layer cards extra compact */
+    .layer-card {
+        padding: 12px 12px 12px 16px;
+        gap: 10px;
+    }
+
+    .modal-content {
+        padding: 16px;
+        border-radius: var(--radius-md);
     }
 }
 
