@@ -145,26 +145,25 @@ export function Wizard() {
         <div className="max-w-4xl mx-auto pb-24">
 
             {/* Stepper Header */}
-            <div className="mb-8 print:hidden">
+            <div className="mb-10 print:hidden">
                 <div className="flex justify-between items-center relative">
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-200 dark:bg-gray-800 rounded-full z-0"></div>
-                    <div
-                        className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-indigo-600 dark:bg-indigo-500 rounded-full z-0 transition-all duration-300"
-                        style={{ width: `${((currentStep - 1) / (WIZARD_STEPS.length - 1)) * 100}%` }}
-                    ></div>
+                    {/* Background track line */}
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full step-line z-0">
+                        <div
+                            className="step-line-fill"
+                            style={{ width: `${((currentStep - 1) / (WIZARD_STEPS.length - 1)) * 100}%` }}
+                        />
+                    </div>
 
                     {WIZARD_STEPS.map((step) => {
                         const isCompleted = currentStep > step.id;
                         const isCurrent = currentStep === step.id;
                         return (
-                            <div key={step.id} className="relative z-10 flex flex-col items-center gap-2">
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-colors border-2 ${isCompleted ? 'bg-indigo-600 border-indigo-600 text-white' :
-                                    isCurrent ? 'bg-white dark:bg-gray-900 border-indigo-600 text-indigo-600 dark:text-indigo-400' :
-                                        'bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-gray-400'
-                                    }`}>
+                            <div key={step.id} className="relative z-10 flex flex-col items-center gap-2.5">
+                                <div className={`step-circle ${isCompleted ? 'completed' : isCurrent ? 'active' : ''}`}>
                                     {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : step.id}
                                 </div>
-                                <span className={`text-xs font-semibold hidden md:block ${isCurrent || isCompleted ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-400 dark:text-gray-500'}`}>
+                                <span className={`text-xs font-bold hidden md:block transition-colors ${isCurrent ? 'text-indigo-500' : isCompleted ? 'text-emerald-500' : 'text-gray-400 dark:text-gray-600'}`}>
                                     {step.title}
                                 </span>
                             </div>
@@ -175,9 +174,9 @@ export function Wizard() {
 
             {/* Error Banner */}
             {error && (
-                <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-4 rounded-xl border border-red-200 dark:border-red-800 flex items-center gap-3 animate-slide-in mb-6">
-                    <div className="w-2 h-2 rounded-full bg-red-500"></div>
-                    {error}
+                <div className="p-4 rounded-xl flex items-center gap-3 animate-slide-in mb-6" style={{ background: 'linear-gradient(135deg, rgba(239,68,68,0.08), rgba(239,68,68,0.03))', border: '1px solid rgba(239,68,68,0.15)' }}>
+                    <div className="w-2 h-2 rounded-full bg-red-500" style={{ boxShadow: '0 0 8px rgba(239,68,68,0.5)' }}></div>
+                    <span className="text-red-600 dark:text-red-400 text-sm font-medium">{error}</span>
                 </div>
             )}
 
