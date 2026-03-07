@@ -144,13 +144,62 @@ function analyzeForInks(imageElement: HTMLImageElement, numColors = 6): { matche
     const data = imageData.data;
 
     const pixels: number[][] = [];
-    for (let i = 0; i < data.length; i += 4) {
-        if (data[i + 3] > 128) pixels.push([data[i], data[i + 1], data[i + 2]]);
+    const edgePixels: number[][] = [];
+
+    // 1. Gather all pixels and specifically sample edge pixels for background detection
+    for (let y = 0; y < canvas.height; y++) {
+        for (let x = 0; x < canvas.width; x++) {
+            const i = (y * canvas.width + x) * 4;
+            if (data[i + 3] > 128) { // If not heavily transparent
+                const r = data[i], g = data[i + 1], b = data[i + 2];
+                pixels.push([r, g, b]);
+
+                // Sample outer 5% border for background color
+                if (x < canvas.width * 0.05 || x > canvas.width * 0.95 ||
+                    y < canvas.height * 0.05 || y > canvas.height * 0.95) {
+                    edgePixels.push([r, g, b]);
+                }
+            }
+        }
     }
+
     if (pixels.length === 0) return { matches: [], cylinderCount: 0, uniqueInks: [] };
 
-    const k = Math.min(numColors, pixels.length);
-    const { centers, labels } = kMeans(pixels, k);
+    // 2. Determine background color using simplistic mode of edge pixels
+    let bgFilterRgb: number[] | null = null;
+    if (edgePixels.length > 0) {
+        // Fast K-means on edge pixels (k=1) to find the dominant background color
+        const edgeSums = [0, 0, 0];
+        for (const p of edgePixels) {
+            edgeSums[0] += p[0]; edgeSums[1] += p[1]; edgeSums[2] += p[2];
+        }
+        bgFilterRgb = [
+            edgeSums[0] / edgePixels.length,
+            edgeSums[1] / edgePixels.length,
+            edgeSums[2] / edgePixels.length
+        ];
+    }
+
+    // 3. Filter out background/substrate pixels
+    let filteredPixels = pixels;
+    if (bgFilterRgb) {
+        // Drop pixels that are very close to the identified background color (distance < 35)
+        // Also drop pure grays/silvers/whites with extremely low saturation if they dominate
+        filteredPixels = pixels.filter(p => {
+            const distFromBg = rgbDistance(p, bgFilterRgb!);
+            return distFromBg > 40; // Strict threshold to ignore substrate
+        });
+
+        // Fallback: If we accidentally filtered everything out (e.g., solid color image), revert to original
+        if (filteredPixels.length < pixels.length * 0.05) {
+            filteredPixels = pixels;
+        }
+    }
+
+    const k = Math.min(numColors, filteredPixels.length);
+    if (k === 0) return { matches: [], cylinderCount: 0, uniqueInks: [] };
+
+    const { centers, labels } = kMeans(filteredPixels, k);
 
     const counts: Record<number, number> = {};
     for (const l of labels) counts[l] = (counts[l] || 0) + 1;
@@ -164,7 +213,7 @@ function analyzeForInks(imageElement: HTMLImageElement, numColors = 6): { matche
 
     for (const { idx, count } of sorted) {
         const rgb = centers[idx];
-        const percentage = Math.round((count / pixels.length) * 1000) / 10;
+        const percentage = Math.round((count / filteredPixels.length) * 1000) / 10;
         const hex = rgbToHex(rgb[0], rgb[1], rgb[2]);
 
         // Try direct ink match
