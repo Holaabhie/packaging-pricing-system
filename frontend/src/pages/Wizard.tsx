@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { FilmStructureBuilder } from '../components/FilmStructureBuilder';
 import { CostResult } from '../components/CostResult';
 import { PresetTemplates } from '../components/PresetTemplates';
-import { AIColorScanner } from '../components/AIColorScanner';
+import { ColorScanner } from '../components/AIColorScanner';
 import { useToast } from '../components/ToastProvider';
 import { MaterialType, PouchType, PrintingMethod } from '../types';
 import type { ProductRequirements, CostBreakdown } from '../types';
@@ -189,7 +189,7 @@ export function Wizard() {
                     <div className="space-y-6">
                         <PresetTemplates onSelect={handlePresetSelect} />
 
-                        <AIColorScanner
+                        <ColorScanner
                             onColorsDetected={(count) => setRequirements(prev => ({ ...prev, number_of_colors: count }))}
                         />
 
